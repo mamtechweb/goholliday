@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoHolliday - MAMTECH Category System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --brand: #00D1D1;
+            --bg-dark: #0B1222;
+            --card-dark: #161F32;
+            --text-main: #FFFFFF;
+            --text-grey: #94A3B8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: var(--text-main); }
+
+        /* --- PAGES --- */
+        .page { display: none; padding: 25px 25px 110px; min-height: 100vh; animation: fadeIn 0.3s ease; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- CATEGORY LIST STYLE --- */
+        .cat-card {
+            background: var(--card-dark);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cat-card:active { transform: scale(0.95); background: var(--brand); color: #000; }
+        .cat-info { display: flex; align-items: center; gap: 15px; }
+        .cat-icon { width: 45px; height: 45px; background: rgba(0,209,209,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--brand); }
+
+        /* --- TOUR CARD --- */
+        .tour-card { background: var(--card-dark); border-radius: 25px; margin-bottom: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .tour-img { width: 100%; height: 180px; object-fit: cover; }
+        .price-badge { position: absolute; top: 15px; right: 15px; background: var(--brand); color: #000; padding: 5px 12px; border-radius: 10px; font-weight: 700; font-size: 0.75rem; }
+
+        /* --- NAV --- */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #111827; display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: var(--text-grey); font-size: 1.3rem; cursor: pointer; }
+        .nav-item.active { color: var(--brand); }
+    </style>
+</head>
+<body>
+
+    <div id="home-page" class="page active-page">
+        <h2 style="margin-bottom: 20px;">Explore Sumenep</h2>
+        <div id="all-list"></div>
+    </div>
+
+    <div id="explore-page" class="page">
+        <h2 style="margin-bottom: 10px;">Kategori</h2>
+        <p style="color: var(--text-grey); margin-bottom: 25px;">Cari destinasi berdasarkan kategori</p>
+        
+        <div class="cat-card" onclick="filterByCategory('Pantai')">
+            <div class="cat-info">
+                <div class="cat-icon"><i class="fas fa-umbrella-beach"></i></div>
+                <div><h4>Pantai & Gili</h4><p style="font-size:0.7rem; color:var(--text-grey);">5 Destinasi</p></div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="cat-card" onclick="filterByCategory('Religi')">
+            <div class="cat-info">
+                <div class="cat-icon"><i class="fas fa-mosque"></i></div>
+                <div><h4>Wisata Religi</h4><p style="font-size:0.7rem; color:var(--text-grey);">3 Destinasi</p></div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="cat-card" onclick="filterByCategory('Alam')">
+            <div class="cat-info">
+                <div class="cat-icon"><i class="fas fa-mountain"></i></div>
+                <div><h4>Alam & Bukit</h4><p style="font-size:0.7rem; color:var(--text-grey);">3 Destinasi</p></div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="cat-card" onclick="filterByCategory('Sejarah')">
+            <div class="cat-info">
+                <div class="cat-icon"><i class="fas fa-fort-awesome"></i></div>
+                <div><h4>Sejarah & Ikon</h4><p style="font-size:0.7rem; color:var(--text-grey);">2 Destinasi</p></div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+    </div>
+
+    <div id="result-page" class="page">
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+            <i class="fas fa-arrow-left" onclick="nav('explore-page', document.querySelector('.nav-item:nth-child(2)'))"></i>
+            <h2 id="cat-title">Nama Kategori</h2>
+        </div>
+        <div id="filtered-list"></div>
+    </div>
+
+    <div id="profile-page" class="page">
+        <h2 style="margin-bottom:20px;">Profil</h2>
+        <div style="text-align:center; background:var(--card-dark); padding:30px; border-radius:30px;">
+            <img src="https://i.pravatar.cc/150?u=imam" style="width:100px; border-radius:25px; border:3px solid var(--brand);">
+            <h3 style="margin-top:15px;">Imam Mahdi</h3>
+            <p style="color:var(--text-grey);">MAMTECH Owner</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="nav('home-page', this)"><i class="fas fa-house"></i></div>
+        <div class="nav-item" onclick="nav('explore-page', this)"><i class="fas fa-compass"></i></div>
+        <div class="nav-item"><i class="fas fa-heart"></i></div>
+        <div class="nav-item" onclick="nav('profile-page', this)"><i class="fas fa-user"></i></div>
+    </nav>
+
+    <script>
+        const destinations = [
+            { name: "Gili Labak", cat: "Pantai", price: "Free*", img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=400" },
+            { name: "Gili Iyang", cat: "Alam", price: "Rp 15k", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
+            { name: "Pantai Sembilan", cat: "Pantai", price: "Rp 15k", img: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400" },
+            { name: "Pantai Lombang", cat: "Pantai", price: "Rp 10k", img: "https://images.unsplash.com/photo-1506929199175-609ec3f7717c?w=400" },
+            { name: "Pantai Slopeng", cat: "Pantai", price: "Rp 10k", img: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=400" },
+            { name: "Masjid Agung", cat: "Religi", price: "Free", img: "https://images.unsplash.com/photo-1590076215667-873d38354fe5?w=400" },
+            { name: "Asta Tinggi", cat: "Religi", price: "Donasi", img: "https://images.unsplash.com/photo-1605648916361-9bc12ad6a569?w=400" },
+            { name: "Asta Sayyid Yusuf", cat: "Religi", price: "Donasi", img: "https://images.unsplash.com/photo-1597466599360-3b9775841aec?w=400" },
+            { name: "Keraton Sumenep", cat: "Sejarah", price: "Rp 5k", img: "https://images.unsplash.com/photo-1625492922105-5914617fd869?w=400" },
+            { name: "Taman Adipura", cat: "Sejarah", price: "Free", img: "https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=400" },
+            { name: "Bukit Tawap", cat: "Alam", price: "Rp 15k", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" },
+            { name: "Daramista", cat: "Alam", price: "Rp 10k", img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
+            { name: "Mangrove Kedatim", cat: "Alam", price: "Rp 10k", img: "https://images.unsplash.com/photo-1544161513-0179fe746fd5?w=400" }
+        ];
+
+        function nav(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-page');
+            if(btn) btn.classList.add('active');
+        }
+
+        function renderList(targetId, data) {
+            const container = document.getElementById(targetId);
+            container.innerHTML = '';
+            data.forEach(d => {
+                container.innerHTML += `
+                    <div class="tour-card">
+                        <div class="price-badge">${d.price}</div>
+                        <img src="${d.img}" class="tour-img">
+                        <div style="padding:15px;">
+                            <p style="color:var(--brand); font-size:0.7rem; font-weight:700;">${d.cat.toUpperCase()}</p>
+                            <h4 style="margin:5px 0;">${d.name}</h4>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterByCategory(category) {
+            const filtered = destinations.filter(d => d.cat === category);
+            document.getElementById('cat-title').innerText = category;
+            renderList('filtered-list', filtered);
+            nav('result-page');
+        }
+
+        // Render semua saat buka
+        renderList('all-list', destinations);
+    </script>
+</body>
+</html>
